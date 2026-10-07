@@ -4,7 +4,7 @@ const fs = require("fs");
 const session = require("express-session");
 
 const app = express();
-
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 3000;
 
 /*
@@ -397,27 +397,6 @@ app.post(
     }
 );
 
-
-/* =========================
-   STATİK DOSYALAR
-========================= */
-
-/*
-    HTML dosyalarını burada
-    doğrudan public yapmıyoruz.
-
-    Gerekli diğer dosyalar için
-    static kullanıyoruz.
-*/
-
-app.use(
-    express.static(
-        __dirname,
-        {
-            index: false
-        }
-    )
-);
 
 
 /* =========================
