@@ -481,6 +481,24 @@
             background: rgba(255,255,255,.08);
             color: white;
         }
+
+        .view-section { margin-top: 15px; }
+        .view-heading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 11px;
+            color: rgba(255,255,255,.45);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+        }
+        .view-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255,255,255,.82);
+        }
+
     </style>
 
 </head>
@@ -639,11 +657,26 @@
 
 
 
+        <div class="details view-section">
+
+            <div class="detail-card">
+                <div class="view-heading">👁 Son Görüntülenme</div>
+                <div class="view-value" id="lastView">—</div>
+            </div>
+
+            <div class="detail-card">
+                <div class="view-heading">Toplam Görüntülenme</div>
+                <div class="view-value" id="totalViews">0</div>
+            </div>
+
+        </div>
+
+
         <button
 
             class="refresh"
 
-            onclick="loadAnswer()"
+            onclick="loadAnswer(); loadViews()"
 
         >
 
@@ -949,11 +982,50 @@
 
 
 
+    async function loadViews() {
+
+        const lastView = document.getElementById("lastView");
+        const totalViews = document.getElementById("totalViews");
+
+        try {
+            const response = await fetch("/api/views");
+
+            if (!response.ok) {
+                throw new Error("Görüntülenme bilgisi alınamadı");
+            }
+
+            const data = await response.json();
+
+            totalViews.innerText = data.total ?? 0;
+
+            if (data.lastView) {
+                const date = new Date(data.lastView);
+
+                lastView.innerText = date.toLocaleString(
+                    "tr-TR",
+                    {
+                        dateStyle: "medium",
+                        timeStyle: "medium"
+                    }
+                );
+            } else {
+                lastView.innerText = "Henüz görüntülenmedi";
+            }
+
+        } catch (error) {
+            console.error(error);
+            lastView.innerText = "Alınamadı";
+            totalViews.innerText = "—";
+        }
+    }
+
+
     /* Sayfa açılınca otomatik getir */
 
 
 
     loadAnswer();
+    loadViews();
 
 
 
@@ -969,6 +1041,11 @@
 
         5000
 
+    );
+
+    setInterval(
+        loadViews,
+        5000
     );
 
 

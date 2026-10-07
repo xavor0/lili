@@ -1028,7 +1028,21 @@ async function answerNo() {
 
 
         updateProgress();
+/* Site açıldığında görüntülenme kaydı gönder */
+async function registerView() {
+    try {
+        await fetch("/api/view", {
+            method: "POST"
+        });
+    } catch (error) {
+        console.error(
+            "Görüntülenme kaydedilemedi:",
+            error
+        );
+    }
+}
 
+registerView();
     </script>
 
 </body>

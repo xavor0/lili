@@ -199,7 +199,52 @@ app.post(
     }
 );
 
+/* =========================
+   SITE GÖRÜNTÜLENME KAYDI
+========================= */
 
+app.post(
+    "/api/view",
+    async (req, res) => {
+
+        if (!supabase) {
+            return res
+                .status(500)
+                .json({
+                    success: false
+                });
+        }
+
+        try {
+
+            const { error } =
+                await supabase
+                    .from("lili_views")
+                    .insert({});
+
+            if (error) {
+                throw error;
+            }
+
+            return res.json({
+                success: true
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Görüntülenme kayıt hatası:",
+                error
+            );
+
+            return res
+                .status(500)
+                .json({
+                    success: false
+                });
+        }
+    }
+);
 /* =========================
    LOGIN SAYFASI
 ========================= */
@@ -402,7 +447,95 @@ app.get(
     }
 );
 
+/* =========================
+   ADMIN GÖRÜNTÜLENME BİLGİSİ
+========================= */
 
+app.get(
+    "/api/views",
+    async (req, res) => {
+
+        if (
+            !req.session ||
+            !req.session.isAdmin
+        ) {
+            return res
+                .status(401)
+                .json({
+                    success: false,
+                    message: "Yetkisiz erişim."
+                });
+        }
+
+        if (!supabase) {
+            return res
+                .status(500)
+                .json({
+                    success: false
+                });
+        }
+
+        try {
+
+            const {
+                count,
+                error: countError
+            } = await supabase
+                .from("lili_views")
+                .select("*", {
+                    count: "exact",
+                    head: true
+                });
+
+            if (countError) {
+                throw countError;
+            }
+
+
+            const {
+                data,
+                error
+            } = await supabase
+                .from("lili_views")
+                .select("viewed_at")
+                .order(
+                    "viewed_at",
+                    {
+                        ascending: false
+                    }
+                )
+                .limit(1)
+                .maybeSingle();
+
+            if (error) {
+                throw error;
+            }
+
+
+            return res.json({
+                success: true,
+                total: count || 0,
+                lastView:
+                    data
+                        ? data.viewed_at
+                        : null
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Görüntülenme okuma hatası:",
+                error
+            );
+
+            return res
+                .status(500)
+                .json({
+                    success: false
+                });
+        }
+    }
+);
 /* =========================
    ADMIN ÇIKIŞ
 ========================= */
