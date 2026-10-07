@@ -1,24 +1,54 @@
 const express = require("express");
 const path = require("path");
-const fs = require("fs");
 const session = require("express-session");
+const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
+
 app.set("trust proxy", 1);
+
 const PORT = process.env.PORT || 3000;
 
-/*
-    ŞİMDİLİK LOCAL TEST ŞİFRESİ
-
-    Daha sonra Render'a geçtiğimizde bunu
-    Environment Variable olarak gizleyeceğiz.
-*/
 const ADMIN_PASSWORD =
     process.env.ADMIN_PASSWORD || "lili123";
 
 const SESSION_SECRET =
     process.env.SESSION_SECRET || "lili-local-secret-2026";
 
+
+/* =========================
+   SUPABASE
+========================= */
+
+const SUPABASE_URL =
+    process.env.SUPABASE_URL;
+
+const SUPABASE_SERVICE_ROLE_KEY =
+    process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+
+let supabase = null;
+
+if (
+    SUPABASE_URL &&
+    SUPABASE_SERVICE_ROLE_KEY
+) {
+    supabase = createClient(
+        SUPABASE_URL,
+        SUPABASE_SERVICE_ROLE_KEY,
+        {
+            auth: {
+                persistSession: false,
+                autoRefreshToken: false
+            }
+        }
+    );
+}
+
+
+/* =========================
+   EXPRESS
+========================= */
 
 app.use(express.json());
 
@@ -30,7 +60,7 @@ app.use(
 
 
 /* =========================
-   SESSION / OTURUM
+   SESSION
 ========================= */
 
 app.use(
@@ -61,81 +91,6 @@ app.use(
 
 
 /* =========================
-   CEVAP DOSYASI
-========================= */
-
-const DATA_FILE =
-    path.join(
-        __dirname,
-        "answer.json"
-    );
-
-
-function getAnswer() {
-
-    try {
-
-        if (!fs.existsSync(DATA_FILE)) {
-
-            return {
-                answer: null,
-                date: null
-            };
-        }
-
-
-        const file =
-            fs.readFileSync(
-                DATA_FILE,
-                "utf8"
-            );
-
-
-        return JSON.parse(file);
-
-    } catch (error) {
-
-        console.error(
-            "Cevap okunamadı:",
-            error
-        );
-
-
-        return {
-            answer: null,
-            date: null
-        };
-    }
-}
-
-
-function saveAnswer(answer) {
-
-    const data = {
-
-        answer: answer,
-
-        date:
-            new Date().toISOString()
-    };
-
-
-    fs.writeFileSync(
-        DATA_FILE,
-        JSON.stringify(
-            data,
-            null,
-            2
-        ),
-        "utf8"
-    );
-
-
-    return data;
-}
-
-
-/* =========================
    ANA SAYFA
 ========================= */
 
@@ -147,7 +102,6 @@ app.get("/", (req, res) => {
             "index.html"
         )
     );
-
 });
 
 
@@ -157,7 +111,7 @@ app.get("/", (req, res) => {
 
 app.post(
     "/api/answer",
-    (req, res) => {
+    async (req, res) => {
 
         const answer =
             req.body.answer;
@@ -167,45 +121,79 @@ app.post(
             answer !== "forgiven" &&
             answer !== "upset"
         ) {
-
             return res
                 .status(400)
                 .json({
                     success: false,
+                    message: "Geçersiz cevap."
+                });
+        }
+
+
+        if (!supabase) {
+
+            console.error(
+                "Supabase environment variables eksik."
+            );
+
+            return res
+                .status(500)
+                .json({
+                    success: false,
                     message:
-                        "Geçersiz cevap."
+                        "Veritabanı bağlantısı hazır değil."
                 });
         }
 
 
         try {
 
-            const saved =
-                saveAnswer(answer);
+            const {
+                data,
+                error
+            } = await supabase
+                .from("lili_answer")
+                .insert({
+                    answer: answer
+                })
+                .select()
+                .single();
+
+
+            if (error) {
+                throw error;
+            }
 
 
             console.log(
-                "Yeni cevap:",
-                saved
+                "Yeni cevap Supabase'e kaydedildi:",
+                {
+                    id: data.id,
+                    answer: data.answer,
+                    created_at: data.created_at
+                }
             );
 
 
-            res.json({
+            return res.json({
                 success: true
             });
+
 
         } catch (error) {
 
             console.error(
-                "Cevap kaydedilemedi:",
+                "Supabase kayıt hatası:",
                 error
             );
 
 
-            res
+            return res
                 .status(500)
                 .json({
-                    success: false
+                    success: false,
+                    message:
+                        "Cevap kaydedilemedi."
                 });
         }
     }
@@ -220,16 +208,10 @@ app.get(
     "/login",
     (req, res) => {
 
-        /*
-            Zaten giriş yaptıysan
-            tekrar login göstermesin.
-        */
-
         if (
             req.session &&
             req.session.isAdmin
         ) {
-
             return res.redirect(
                 "/admin"
             );
@@ -247,7 +229,7 @@ app.get(
 
 
 /* =========================
-   ADMIN LOGIN API
+   ADMIN LOGIN
 ========================= */
 
 app.post(
@@ -298,7 +280,6 @@ function requireAdmin(
         req.session &&
         req.session.isAdmin
     ) {
-
         return next();
     }
 
@@ -329,23 +310,17 @@ app.get(
 
 
 /* =========================
-   ADMIN CEVABI OKUYOR
+   SON CEVABI OKU
 ========================= */
 
 app.get(
     "/api/answer",
-    (req, res) => {
-
-        /*
-            Cevabı yalnızca giriş
-            yapan admin okuyabilir.
-        */
+    async (req, res) => {
 
         if (
             !req.session ||
             !req.session.isAdmin
         ) {
-
             return res
                 .status(401)
                 .json({
@@ -356,15 +331,80 @@ app.get(
         }
 
 
-        res.json(
-            getAnswer()
-        );
+        if (!supabase) {
+
+            return res
+                .status(500)
+                .json({
+                    success: false,
+                    message:
+                        "Veritabanı bağlantısı hazır değil."
+                });
+        }
+
+
+        try {
+
+            const {
+                data,
+                error
+            } = await supabase
+                .from("lili_answer")
+                .select(
+                    "answer, created_at"
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                )
+                .limit(1)
+                .maybeSingle();
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            if (!data) {
+
+                return res.json({
+                    answer: null,
+                    date: null
+                });
+            }
+
+
+            return res.json({
+                answer: data.answer,
+                date: data.created_at
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Supabase okuma hatası:",
+                error
+            );
+
+
+            return res
+                .status(500)
+                .json({
+                    success: false,
+                    message:
+                        "Cevap okunamadı."
+                });
+        }
     }
 );
 
 
 /* =========================
-   ÇIKIŞ
+   ADMIN ÇIKIŞ
 ========================= */
 
 app.post(
@@ -389,14 +429,13 @@ app.post(
                 );
 
 
-                res.json({
+                return res.json({
                     success: true
                 });
             }
         );
     }
 );
-
 
 
 /* =========================
@@ -414,5 +453,15 @@ app.listen(
         console.log(
             `Admin girişi: http://localhost:${PORT}/login`
         );
+
+        if (supabase) {
+            console.log(
+                "Supabase bağlantısı hazır."
+            );
+        } else {
+            console.log(
+                "Supabase bilgileri bulunamadı."
+            );
+        }
     }
 );
