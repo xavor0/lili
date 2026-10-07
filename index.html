@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#120b12">
+
+    <title>Lili'ye Küçük Bir Mesaj 🤍</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100dvh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: #fff;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(255, 103, 150, .13), transparent 35%),
+                radial-gradient(circle at 80% 90%, rgba(255, 150, 180, .08), transparent 35%),
+                linear-gradient(145deg, #090709, #160b11 55%, #0b080a);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 24px 16px;
+            overflow-x: hidden;
+        }
+
+        /* Arka plan */
+
+        .background {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: rgba(255, 74, 130, .08);
+            filter: blur(80px);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            opacity: 0;
+            color: rgba(255, 180, 200, .35);
+            animation: floatHeart linear forwards;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: .35;
+            }
+
+            80% {
+                opacity: .2;
+            }
+
+            100% {
+                transform: translateY(-115vh) rotate(25deg);
+                opacity: 0;
+            }
+        }
+
+        /* Ana alan */
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+
+            width: 100%;
+            max-width: 680px;
+
+            display: flex;
+            justify-content: center;
+        }
+
+        .card {
+            width: 100%;
+
+            padding: 48px 42px 34px;
+
+            background: rgba(255, 255, 255, .055);
+
+            border:
+                1px solid rgba(255, 255, 255, .09);
+
+            border-radius: 28px;
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, .45),
+                inset 0 1px 0 rgba(255, 255, 255, .04);
+
+            text-align: center;
+
+            animation: cardOpen .7s ease;
+        }
+
+        @keyframes cardOpen {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Üst ikon */
+
+        .icon-box {
+            width: 72px;
+            height: 72px;
+
+            margin: 0 auto 22px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 22px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, .09),
+                    rgba(255, 255, 255, .035)
+                );
+
+            border:
+                1px solid rgba(255, 255, 255, .09);
+
+            font-size: 31px;
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, .2);
+
+            transition: .3s;
+        }
+
+        /* Başlık */
+
+        .title {
+            width: 100%;
+
+            font-size: clamp(27px, 5vw, 38px);
+            line-height: 1.2;
+
+            font-weight: 750;
+
+            margin-bottom: 18px;
+
+            color: #fff;
+
+            transition:
+                opacity .2s,
+                transform .2s;
+        }
+
+        /* Mesaj alanı */
+
+        .message-wrapper {
+            width: 100%;
+            min-height: 145px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .message {
+            width: 100%;
+            max-width: 560px;
+
+            font-size: 17px;
+            line-height: 1.75;
+
+            color: rgba(255, 255, 255, .72);
+
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+
+            transition:
+                opacity .2s,
+                transform .2s;
+        }
+
+        .highlight {
+            color: #ff9fba;
+            font-weight: 700;
+        }
+
+        /* Butonlar */
+
+        .button-area {
+            width: 100%;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            gap: 12px;
+
+            margin-top: 24px;
+        }
+
+        button {
+            min-height: 50px;
+
+            border: 0;
+            outline: 0;
+
+            padding: 13px 25px;
+
+            border-radius: 15px;
+
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                transform .2s,
+                box-shadow .2s,
+                background .2s;
+
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .primary-button {
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #e94d79,
+                    #ff769b
+                );
+
+            box-shadow:
+                0 10px 25px rgba(233, 77, 121, .22);
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 14px 32px rgba(233, 77, 121, .3);
+        }
+
+        .secondary-button {
+            color: rgba(255, 255, 255, .78);
+
+            background:
+                rgba(255, 255, 255, .07);
+
+            border:
+                1px solid rgba(255, 255, 255, .08);
+        }
+
+        .secondary-button:hover {
+            background:
+                rgba(255, 255, 255, .11);
+        }
+
+        #answerButtons {
+            display: none;
+        }
+
+        /* İlerleme */
+
+        .bottom-area {
+            margin-top: 31px;
+        }
+
+        .progress-background {
+            width: 150px;
+            max-width: 60%;
+
+            height: 4px;
+
+            margin: 0 auto;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            background:
+                rgba(255, 255, 255, .08);
+        }
+
+        .progress {
+            height: 100%;
+            width: 10%;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #e94d79,
+                    #ff9ab6
+                );
+
+            transition: width .4s ease;
+        }
+
+        .counter {
+            margin-top: 9px;
+
+            color:
+                rgba(255, 255, 255, .28);
+
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        /* Final */
+
+        .final-icon {
+            font-size: 62px;
+            margin-bottom: 20px;
+        }
+
+        .final-title {
+            font-size: clamp(28px, 5vw, 38px);
+            font-weight: 750;
+
+            margin-bottom: 18px;
+        }
+
+        .final-text {
+            max-width: 530px;
+            margin: auto;
+
+            font-size: 17px;
+            line-height: 1.75;
+
+            color:
+                rgba(255, 255, 255, .72);
+        }
+
+        /* Telefon */
+
+        @media (max-width: 600px) {
+
+            body {
+                align-items: center;
+                padding:
+                    max(18px, env(safe-area-inset-top))
+                    13px
+                    max(18px, env(safe-area-inset-bottom));
+            }
+
+            .wrapper {
+                max-width: 100%;
+            }
+
+            .card {
+                padding: 35px 19px 27px;
+                border-radius: 23px;
+            }
+
+            .icon-box {
+                width: 64px;
+                height: 64px;
+
+                border-radius: 19px;
+
+                font-size: 28px;
+
+                margin-bottom: 19px;
+            }
+
+            .title {
+                font-size: 27px;
+                margin-bottom: 14px;
+            }
+
+            .message-wrapper {
+                min-height: 175px;
+            }
+
+            .message {
+                max-width: 100%;
+
+                font-size: 15.5px;
+                line-height: 1.7;
+
+                padding: 0 2px;
+            }
+
+            .button-area {
+                width: 100%;
+                flex-direction: column;
+
+                gap: 10px;
+
+                margin-top: 20px;
+            }
+
+            button {
+                width: 100%;
+                min-height: 52px;
+
+                font-size: 15px;
+            }
+
+            .bottom-area {
+                margin-top: 26px;
+            }
+
+            .final-text {
+                font-size: 15.5px;
+            }
+        }
+
+        /* Çok küçük telefonlar */
+
+        @media (max-width: 360px) {
+
+            body {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .card {
+                padding:
+                    29px 15px
+                    23px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .message {
+                font-size: 14.5px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div
+        class="background"
+        id="background"
+    >
+        <div class="glow"></div>
+    </div>
+
+
+    <main class="wrapper">
+
+        <section
+            class="card"
+            id="card"
+        >
+
+            <div
+                class="icon-box"
+                id="icon"
+            >
+                🤍
+            </div>
+
+
+            <h1
+                class="title"
+                id="title"
+            >
+                Lili, bi' dakika...
+            </h1>
+
+
+            <div class="message-wrapper">
+
+                <div
+                    class="message"
+                    id="message"
+                >
+                    Sana söylemek istediğim birkaç şey var.
+                    Mesaj atıp geçmek yerine,
+                    biraz uğraşıp böyle anlatmak istedim.
+                </div>
+
+            </div>
+
+
+            <div
+                class="button-area"
+                id="nextArea"
+            >
+
+                <button
+                    class="primary-button"
+                    id="nextButton"
+                    onclick="nextMessage()"
+                >
+                    Devam Et
+                </button>
+
+            </div>
+
+
+            <div
+                class="button-area"
+                id="answerButtons"
+            >
+
+                <button
+                    class="primary-button"
+                    onclick="answerYes()"
+                >
+                    Affettim 🤍
+                </button>
+
+
+                <button
+                    class="secondary-button"
+                    onclick="answerNo()"
+                >
+                    Biraz kırgınım
+                </button>
+
+            </div>
+
+
+            <div
+                class="bottom-area"
+                id="bottomArea"
+            >
+
+                <div class="progress-background">
+
+                    <div
+                        class="progress"
+                        id="progress"
+                    ></div>
+
+                </div>
+
+
+                <div
+                    class="counter"
+                    id="counter"
+                >
+                    1 / 10
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        const pages = [
+
+            {
+                icon: "🤍",
+
+                title:
+                    "Lili, bi' dakika...",
+
+                message:
+                    `Sana söylemek istediğim birkaç şey var.
+                    Mesaj atıp geçmek yerine,
+                    biraz uğraşıp böyle anlatmak istedim.`
+            },
+
+            {
+                icon: "😕",
+
+                title:
+                    "Öncelikle özür dilerim.",
+
+                message:
+                    `Senden habersiz birilerine bir şey
+                    söylememem gerekiyordu.
+                    Bunu yaptım ve
+                    <span class="highlight">
+                    yanlış yaptığımın farkındayım.
+                    </span>`
+            },
+
+            {
+                icon: "💭",
+
+                title:
+                    "Mesele sadece söylediğim şey değil.",
+
+                message:
+                    `Asıl yanlışım,
+                    bunu sana söylemeden ve
+                    <span class="highlight">
+                    senden habersiz yapmış olmam.
+                    </span>
+                    Önce seninle konuşmam gerekiyordu.`
+            },
+
+            {
+                icon: "🤦‍♂️",
+
+                title:
+                    "Bunun farkındayım.",
+
+                message:
+                    `Niyetim seni kırmak değildi.
+                    Ama niyetim ne olursa olsun,
+                    yaptığım şeyin seni kırmış olabileceğini
+                    biliyorum.`
+            },
+
+            {
+                icon: "🚫",
+
+                title:
+                    "Bahane üretmeyeceğim.",
+
+                message:
+                    `Kendimi haklı çıkarmaya çalışmayacağım.
+                    Çünkü bazı şeyleri yapmadan önce
+                    düşünmem ve
+                    <span class="highlight">
+                    seninle konuşmam gerekiyordu.
+                    </span>`
+            },
+
+            {
+                icon: "🤝",
+
+                title:
+                    "Sen benim yakın arkadaşımsın.",
+
+                message:
+                    `O yüzden aramızdaki güven benim için önemli.
+                    Böyle bir şey yüzünden
+                    aramızın bozulmasını gerçekten istemiyorum.`
+            },
+
+            {
+                icon: "🫤",
+
+                title:
+                    "Kızdıysan hak veriyorum.",
+
+                message:
+                    `Ben senin yerinde olsaydım
+                    büyük ihtimalle ben de kızardım.
+                    O yüzden kırgın olmanı
+                    küçümsemiyorum.`
+            },
+
+            {
+                icon: "🧠",
+
+                title:
+                    "Dersimi aldım.",
+
+                message:
+                    `Bundan sonra seni ilgilendiren
+                    bir konuda başkasına bir şey söylemeden önce
+                    <span class="highlight">
+                    direkt seninle konuşacağım.
+                    </span>`
+            },
+
+            {
+                icon: "❤️",
+
+                title:
+                    "Arkadaşlığımız benim için önemli.",
+
+                message:
+                    `Hiçbir şey olmamış gibi davranmak istemedim.
+                    Çünkü yaptığım hatadan daha önemli olan şey,
+                    aramızdaki arkadaşlık.`
+            },
+
+            {
+                icon: "🤍",
+
+                title:
+                    "Kısacası Lili...",
+
+                message:
+                    `Senden habersiz yaptığım şey için
+                    gerçekten özür dilerim.
+                    <br><br>
+                    <span class="highlight">
+                    Güvenini kırdıysam bunu düzeltmek istiyorum.
+                    </span>
+                    <br><br>
+                    Beni affeder misin?`
+            }
+
+        ];
+
+
+        let currentPage = 0;
+
+
+        const title =
+            document.getElementById("title");
+
+        const message =
+            document.getElementById("message");
+
+        const icon =
+            document.getElementById("icon");
+
+        const progress =
+            document.getElementById("progress");
+
+        const counter =
+            document.getElementById("counter");
+
+        const nextArea =
+            document.getElementById("nextArea");
+
+        const answerButtons =
+            document.getElementById("answerButtons");
+
+
+        function nextMessage() {
+
+            if (
+                currentPage >=
+                pages.length - 1
+            ) {
+                return;
+            }
+
+
+            title.style.opacity = "0";
+            message.style.opacity = "0";
+            icon.style.opacity = "0";
+
+            title.style.transform =
+                "translateY(5px)";
+
+            message.style.transform =
+                "translateY(5px)";
+
+
+            setTimeout(() => {
+
+                currentPage++;
+
+
+                title.innerHTML =
+                    pages[currentPage].title;
+
+                message.innerHTML =
+                    pages[currentPage].message;
+
+                icon.innerHTML =
+                    pages[currentPage].icon;
+
+
+                title.style.opacity = "1";
+                message.style.opacity = "1";
+                icon.style.opacity = "1";
+
+                title.style.transform =
+                    "translateY(0)";
+
+                message.style.transform =
+                    "translateY(0)";
+
+
+                updateProgress();
+
+
+                if (
+                    currentPage ===
+                    pages.length - 1
+                ) {
+
+                    nextArea.style.display =
+                        "none";
+
+                    answerButtons.style.display =
+                        "flex";
+                }
+
+            }, 200);
+        }
+
+
+        function updateProgress() {
+
+            const amount =
+                ((currentPage + 1) /
+                pages.length) * 100;
+
+
+            progress.style.width =
+                amount + "%";
+
+
+            counter.innerText =
+                (currentPage + 1) +
+                " / " +
+                pages.length;
+        }
+
+
+        async function answerYes() {
+
+    try {
+        await fetch("/api/answer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                answer: "forgiven"
+            })
+        });
+
+        showFinalScreen(
+            "🤝",
+            "Teşekkür ederim Lili.",
+            `
+            Bunu gerçekten aramızın
+            düzelmesini istediğim için hazırladım.
+            <br><br>
+
+            Bundan sonra seni ilgilendiren
+            bir konuda bir şey yapmadan önce
+
+            <span class="highlight">
+                seninle konuşacağım.
+            </span>
+
+            <br><br>
+            Tekrar özür dilerim. 🤍
+            `
+        );
+
+    } catch (error) {
+
+        alert("Cevap kaydedilirken bir sorun oluştu.");
+        console.error(error);
+    }
+}
+
+
+async function answerNo() {
+
+    try {
+        await fetch("/api/answer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                answer: "upset"
+            })
+        });
+
+        showFinalScreen(
+            "🤍",
+            "Tamam Lili.",
+            `
+            Hemen affetmek zorunda değilsin.
+            <br><br>
+
+            Biraz zamana ihtiyacın varsa
+            buna saygı duyuyorum.
+            <br><br>
+
+            Sadece yaptığım şeyin
+
+            <span class="highlight">
+                yanlış olduğunun farkında olduğumu
+            </span>
+
+            bilmeni istedim.
+
+            <br><br>
+            Hazır olduğunda konuşuruz.
+            `
+        );
+
+    } catch (error) {
+
+        alert("Cevap kaydedilirken bir sorun oluştu.");
+        console.error(error);
+    }
+}
+
+
+
+
+
+        function showFinalScreen(
+            finalIcon,
+            finalTitle,
+            finalMessage
+        ) {
+
+            const card =
+                document.getElementById("card");
+
+
+            card.innerHTML = `
+
+                <div class="final-icon">
+                    ${finalIcon}
+                </div>
+
+                <div class="final-title">
+                    ${finalTitle}
+                </div>
+
+                <div class="final-text">
+                    ${finalMessage}
+                </div>
+
+            `;
+        }
+
+
+        /* Hafif kalp animasyonu */
+
+        function createHeart() {
+
+            const background =
+                document.getElementById("background");
+
+
+            const heart =
+                document.createElement("div");
+
+
+            heart.className =
+                "heart";
+
+
+            const hearts = [
+                "♡",
+                "♥",
+                "♡"
+            ];
+
+
+            heart.innerText =
+                hearts[
+                    Math.floor(
+                        Math.random() *
+                        hearts.length
+                    )
+                ];
+
+
+            heart.style.left =
+                Math.random() * 100 + "%";
+
+
+            heart.style.fontSize =
+                (
+                    Math.random() * 9 + 10
+                ) + "px";
+
+
+            heart.style.animationDuration =
+                (
+                    Math.random() * 4 + 8
+                ) + "s";
+
+
+            background.appendChild(
+                heart
+            );
+
+
+            setTimeout(() => {
+
+                heart.remove();
+
+            }, 12500);
+        }
+
+
+        /* Kalpler çok sık çıkmasın */
+
+        setInterval(
+            createHeart,
+            1400
+        );
+
+
+        updateProgress();
+
+    </script>
+
+</body>
+</html>

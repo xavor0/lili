@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#120b12">
+
+    <title>Admin Girişi</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100dvh;
+            font-family: "Segoe UI", Arial, sans-serif;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 18px;
+
+            color: white;
+
+            background:
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(255, 103, 150, .13),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 80% 90%,
+                    rgba(255, 150, 180, .08),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    145deg,
+                    #090709,
+                    #160b11 55%,
+                    #0b080a
+                );
+
+            overflow: hidden;
+        }
+
+        .glow {
+            position: fixed;
+
+            width: 350px;
+            height: 350px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255, 74, 130, .07);
+
+            filter: blur(90px);
+
+            pointer-events: none;
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 2;
+
+            width: 100%;
+            max-width: 420px;
+
+            padding: 40px 32px;
+
+            text-align: center;
+
+            background:
+                rgba(255, 255, 255, .055);
+
+            border:
+                1px solid rgba(255, 255, 255, .09);
+
+            border-radius: 26px;
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, .45);
+        }
+
+        .icon {
+            width: 68px;
+            height: 68px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 20px;
+
+            font-size: 29px;
+
+            background:
+                rgba(255, 255, 255, .07);
+
+            border:
+                1px solid rgba(255, 255, 255, .08);
+        }
+
+        h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            font-size: 14px;
+            line-height: 1.6;
+
+            color:
+                rgba(255, 255, 255, .45);
+
+            margin-bottom: 28px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+
+            margin: 0 0 8px 3px;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            color:
+                rgba(255, 255, 255, .5);
+        }
+
+        .password-box {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            height: 52px;
+
+            padding: 0 50px 0 16px;
+
+            border-radius: 14px;
+
+            border:
+                1px solid rgba(255, 255, 255, .09);
+
+            outline: none;
+
+            color: white;
+
+            font-family: inherit;
+            font-size: 15px;
+
+            background:
+                rgba(255, 255, 255, .055);
+
+            transition:
+                border .2s,
+                background .2s;
+        }
+
+        input:focus {
+            border-color:
+                rgba(255, 118, 155, .55);
+
+            background:
+                rgba(255, 255, 255, .075);
+        }
+
+        input::placeholder {
+            color:
+                rgba(255, 255, 255, .25);
+        }
+
+        .show-password {
+            position: absolute;
+
+            right: 8px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 38px;
+            height: 38px;
+
+            border: 0;
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            color:
+                rgba(255, 255, 255, .65);
+
+            background: transparent;
+
+            font-size: 17px;
+        }
+
+        .login-button {
+            width: 100%;
+            min-height: 52px;
+
+            margin-top: 7px;
+
+            border: 0;
+            border-radius: 14px;
+
+            cursor: pointer;
+
+            color: white;
+
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #e94d79,
+                    #ff769b
+                );
+
+            box-shadow:
+                0 10px 25px
+                rgba(233, 77, 121, .22);
+
+            transition: .2s;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .login-button:disabled {
+            opacity: .6;
+            cursor: wait;
+            transform: none;
+        }
+
+        .error {
+            display: none;
+
+            margin-top: 15px;
+            padding: 11px;
+
+            border-radius: 12px;
+
+            font-size: 13px;
+
+            color: #ffb6c8;
+
+            background:
+                rgba(255, 70, 110, .08);
+
+            border:
+                1px solid rgba(255, 70, 110, .12);
+        }
+
+        .footer {
+            margin-top: 25px;
+
+            font-size: 10px;
+            letter-spacing: 2px;
+
+            color:
+                rgba(255, 255, 255, .22);
+        }
+
+        @media (max-width: 500px) {
+
+            body {
+                padding: 13px;
+            }
+
+            .login-card {
+                padding: 33px 20px;
+                border-radius: 22px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            input,
+            .login-button {
+                min-height: 54px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="glow"></div>
+
+    <main class="login-card">
+
+        <div class="icon">
+            🔐
+        </div>
+
+        <h1>Admin Girişi</h1>
+
+        <div class="description">
+            Lili cevap panelini görüntülemek için
+            yönetici şifresini gir.
+        </div>
+
+        <form id="loginForm">
+
+            <div class="input-group">
+
+                <label for="password">
+                    ŞİFRE
+                </label>
+
+                <div class="password-box">
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Şifreni gir"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="show-password"
+                        onclick="togglePassword()"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="login-button"
+                id="loginButton"
+            >
+                Giriş Yap
+            </button>
+
+            <div
+                class="error"
+                id="errorMessage"
+            >
+                Şifre yanlış.
+            </div>
+
+        </form>
+
+        <div class="footer">
+            PRIVATE • ADMIN PANEL
+        </div>
+
+    </main>
+
+
+    <script>
+
+        function togglePassword() {
+
+            const input =
+                document.getElementById("password");
+
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
+        }
+
+
+        document
+            .getElementById("loginForm")
+            .addEventListener(
+                "submit",
+                async function(event) {
+
+                    event.preventDefault();
+
+
+                    const password =
+                        document
+                            .getElementById("password")
+                            .value;
+
+
+                    const button =
+                        document
+                            .getElementById("loginButton");
+
+
+                    const error =
+                        document
+                            .getElementById("errorMessage");
+
+
+                    error.style.display =
+                        "none";
+
+
+                    button.disabled =
+                        true;
+
+                    button.innerText =
+                        "Kontrol ediliyor...";
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                "/api/admin/login",
+                                {
+                                    method: "POST",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body: JSON.stringify({
+                                        password: password
+                                    })
+                                }
+                            );
+
+
+                        const data =
+                            await response.json();
+
+
+                        if (data.success) {
+
+                            window.location.href =
+                                "/admin";
+
+                            return;
+                        }
+
+
+                        error.innerText =
+                            "Şifre yanlış.";
+
+                        error.style.display =
+                            "block";
+
+
+                    } catch (err) {
+
+                        error.innerText =
+                            "Sunucuya bağlanılamadı.";
+
+                        error.style.display =
+                            "block";
+
+                    }
+
+
+                    button.disabled =
+                        false;
+
+                    button.innerText =
+                        "Giriş Yap";
+                }
+            );
+
+    </script>
+
+</body>
+</html>
